@@ -57,23 +57,40 @@ class Mainwindow(QMainWindow):
 class SearchDialog(QDialog):
     def __init__(self):
         super().__init__()
+
+        # Set window title and size
         self.setWindowTitle("Search Student")
         self.setFixedWidth(300)
         self.setFixedHeight(400)
 
-        layout = QVBoxLayout()
 
-        # Add search name box widget
-        self.search_box = QLineEdit()
-        self.search_box.setPlaceholderText("Name:")
-        layout.addWidget(self.search_box)
+        # Add layout and input widget
+        layout = QVBoxLayout()
+        self.student_name = QLineEdit()
+        self.student_name.setPlaceholderText("Name:")
+        layout.addWidget(self.student_name)
 
         # Add search button
-        search_button = QPushButton("Search")
-        # search_button.clicked.connect(self.search_student)
-        layout.addWidget(search_button)
+        button = QPushButton("Search")
+        button.clicked.connect(self.search)
+        layout.addWidget(button)
 
         self.setLayout(layout)
+
+    def search(self):
+        name = self.student_name.text()
+        connection = sqlite3.connect("database.db")
+        cursor = connection.cursor()
+        result = cursor.execute("SELECT * FROM students WHERE name = ?", (name,))
+        rows = list(result)
+        print(rows)
+        items = main_window.table.findItems(name, Qt.MatchFlag.MatchFixedString)
+        for item in items:
+            print(item)
+            main_window.table.item(item.row(), 1).setSelected(True)
+        
+        cursor.close()
+        connection.close()
 
 class InsertDialog(QDialog):
     def __init__(self):
