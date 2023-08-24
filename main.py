@@ -23,6 +23,7 @@ class Mainwindow(QMainWindow):
         
         about_action = QAction("About", self)
         help_menu_item.addAction(about_action)
+        about_action.triggered.connect(self.about)
 
         search_action = QAction(QIcon("icons/search.png"),"Search", self)
         edit_menu_item.addAction(search_action)
@@ -89,7 +90,22 @@ class Mainwindow(QMainWindow):
     def delete(self):
         dialog = DeleteDialog()
         dialog.exec()
+    
+    def about(self):
+        dialog = AboutDialog()
+        dialog.exec()
 
+class AboutDialog(QMessageBox):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("About")
+        content = """
+        This app was created using PyQt6, Python 3.11.1
+        and the data is stored on a SQL database. Feel free to use!
+        """
+        self.setText(content)
+        self.setIcon(QMessageBox.Icon.Information)
+        self.setStandardButtons(QMessageBox.StandardButton.Ok)
 class DeleteDialog(QDialog):
     def __init__(self):
         super().__init__()
