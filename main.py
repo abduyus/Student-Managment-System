@@ -7,7 +7,7 @@ import sys
 import sqlite3
 
 class DatabaseConnection:
-    def __init__(self, database_file="datatbase.db"):
+    def __init__(self, database_file="database.db"):
         self.database_file = database_file
 
     def connect(self):
@@ -75,12 +75,14 @@ class Mainwindow(QMainWindow):
 
     def load_data(self):
         connection = DatabaseConnection().connect()
-        result = connection.execute("SELECT * FROM students")
+        cursor = connection.cursor()
+        result = cursor.execute("SELECT * FROM students")
         self.table.setRowCount(0)
         for row_number, row_data in enumerate(result):
             self.table.insertRow(row_number)
             for column_number, data in enumerate(row_data):
                 self.table.setItem(row_number, column_number, QTableWidgetItem(str(data)))
+        cursor.close()
         connection.close()
     
     def insert(self):
